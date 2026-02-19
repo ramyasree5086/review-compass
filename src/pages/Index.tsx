@@ -88,8 +88,7 @@ const Index = () => {
             Real Review <span className="gradient-text">Sentiment Analysis</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Search any product or movie, choose a platform, and get instant sentiment analysis
-            powered by NLP and machine learning.
+            Search any product or movie, choose a platform, and get instant sentiment analysis.
           </p>
         </section>
 
@@ -106,11 +105,10 @@ const Index = () => {
                   <button
                     key={p.id}
                     onClick={() => setPlatform(p.id)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all ${
-                      isActive
-                        ? "bg-primary text-primary-foreground glow-primary"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                    }`}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-all ${isActive
+                      ? "bg-primary text-primary-foreground glow-primary"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      }`}
                   >
                     <Icon className="w-4 h-4" />
                     {p.label}
@@ -221,7 +219,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border/50 py-6 mt-12">
         <p className="text-center text-sm text-muted-foreground">
-          Academic Project &bull; Built with ML &amp; NLP &bull; TF-IDF + Naive Bayes Classifier
+          &copy; {new Date().getFullYear()} Review Insights
         </p>
       </footer>
     </div>

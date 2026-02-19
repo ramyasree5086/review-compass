@@ -67,10 +67,9 @@ const ResultCard = ({ result, reviewText }: ResultCardProps) => {
         </div>
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-700 ease-out ${
-              result.label === "Positive" ? "bg-positive" :
+            className={`h-full rounded-full transition-all duration-700 ease-out ${result.label === "Positive" ? "bg-positive" :
               result.label === "Negative" ? "bg-negative" : "bg-neutral"
-            }`}
+              }`}
             style={{ width: `${result.confidence * 100}%` }}
           />
         </div>
@@ -81,33 +80,16 @@ const ResultCard = ({ result, reviewText }: ResultCardProps) => {
         {(["Positive", "Negative", "Neutral"] as const).map((label) => (
           <div
             key={label}
-            className={`rounded-lg p-3 text-center ${
-              result.label === label ? sentimentConfig[label].bgClass : "bg-secondary/50"
-            }`}
+            className={`rounded-lg p-3 text-center ${result.label === label ? sentimentConfig[label].bgClass : "bg-secondary/50"
+              }`}
           >
             <p className="text-xs text-muted-foreground">{label}</p>
-            <p className={`text-lg font-mono font-semibold ${
-              result.label === label ? sentimentConfig[label].colorClass : "text-foreground/60"
-            }`}>
+            <p className={`text-lg font-mono font-semibold ${result.label === label ? sentimentConfig[label].colorClass : "text-foreground/60"
+              }`}>
               {(result.probabilities[label] * 100).toFixed(1)}%
             </p>
           </div>
         ))}
-      </div>
-
-      {/* Method tag */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        {result.method === "rule-based" ? (
-          <>
-            <Shield className="w-3.5 h-3.5 text-primary" />
-            <span>Safety override (rule-based detection)</span>
-          </>
-        ) : (
-          <>
-            <Cpu className="w-3.5 h-3.5 text-primary" />
-            <span>ML Model (TF-IDF + Cosine Similarity Classifier)</span>
-          </>
-        )}
       </div>
 
       {/* Reviewed text */}

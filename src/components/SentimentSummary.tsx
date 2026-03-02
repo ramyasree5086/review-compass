@@ -4,7 +4,7 @@ import { ThumbsUp, ThumbsDown, Minus, TrendingUp } from "lucide-react";
 interface SentimentSummaryProps {
   results: { text: string; result: PredictionResult }[];
   query: string;
-  platform: string;
+  platform: string | string[];
 }
 
 const SentimentSummary = ({ results, query, platform }: SentimentSummaryProps) => {
@@ -32,13 +32,19 @@ const SentimentSummary = ({ results, query, platform }: SentimentSummaryProps) =
   const platformLabels: Record<string, string> = {
     amazon: "Amazon",
     imdb: "IMDB",
+    flipkart: "Flipkart",
+    reviewmonk: "The Review Monk",
   };
+
+  const platformDisplay = Array.isArray(platform)
+    ? platform.map((p) => platformLabels[p] || p).join(', ')
+    : platformLabels[platform] || platform;
 
   return (
     <div className={`card-glass rounded-xl p-6 border ${c.borderClass} ${c.glowClass}`}>
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
         <TrendingUp className="w-3.5 h-3.5 text-primary" />
-        <span>Overall Sentiment for <strong className="text-foreground">"{query}"</strong> on {platformLabels[platform] || platform}</span>
+        <span>Overall Sentiment for <strong className="text-foreground">"{query}"</strong> on {platformDisplay}</span>
       </div>
 
       <div className="flex items-center justify-between">

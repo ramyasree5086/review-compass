@@ -10,13 +10,13 @@ export interface FetchReviewsResponse {
   reviews?: string[];
   sources?: ReviewSource[];
   query?: string;
-  platform?: string;
+  platform?: string | string[];
   error?: string;
 }
 
 export async function fetchReviews(
   query: string,
-  platform: string
+  platform: string | string[]
 ): Promise<FetchReviewsResponse> {
   const { data, error } = await supabase.functions.invoke('fetch-reviews', {
     body: { query, platform },

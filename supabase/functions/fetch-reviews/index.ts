@@ -26,14 +26,21 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Build search query based on platform
+    // Build search query based on platform(s)
+    const buildFor = (p: string) => {
+      if (p === 'amazon') return `${query} review site:amazon.com OR site:amazon.in`;
+      if (p === 'flipkart') return `${query} review site:flipkart.com`;
+      if (p === 'imdb') return `${query} user review site:imdb.com`;
+      if (p === 'reviewmonk') return `${query} review site:thereviewmonk.com`;
+      return `${query} review ${p}`;
+    };
+
     let searchQuery = '';
-    if (platform === 'amazon') {
-      searchQuery = `${query} review site:amazon.com OR site:amazon.in`;
-    } else if (platform === 'imdb') {
-      searchQuery = `${query} user review site:imdb.com`;
+    if (Array.isArray(platform)) {
+      const parts = platform.map((p: string) => buildFor(p));
+      searchQuery = parts.join(' OR ');
     } else {
-      searchQuery = `${query} review ${platform}`;
+      searchQuery = buildFor(platform || '');
     }
 
     console.log('Searching for reviews:', searchQuery);
@@ -94,7 +101,7 @@ Deno.serve(async (req) => {
           if (wordCount < 4) return false;
           return true;
         });
-      
+
       reviews.push(...sentences.slice(0, 10));
     }
 

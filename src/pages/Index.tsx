@@ -39,24 +39,56 @@ const Index = () => {
   const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   const getMockReviews = (query: string, platform: Platform): any => {
-    const templates = [
-      `I really liked this ${query}! It exceeded my expectations in every way.`,
-      `The build quality of this ${query} from ${platform} is impressive for the price.`,
-      `Not exactly what I expected, but the performance of the ${query} is still solid.`,
+    const isMovie = searchCategory === 'movies';
+
+    // Category-specific templates
+    const positiveTemplates = isMovie ? [
+      `Absolutely brilliant! The acting in ${query} is top-notch.`,
+      `A masterpiece of cinema. I've already watched ${query} three times.`,
+      `The soundtrack of ${query} is still stuck in my head. Incredible experience.`,
+      `Finally, a ${query} adaptation that actually makes sense!`,
+      `${platform} really nailed the streaming quality for ${query}. Great watch.`,
+    ] : [
+      `I really liked this ${query}! The build quality exceeded my expectations.`,
+      `The battery life on this ${query} is insane. Definitely worth the buy on ${platform}.`,
       `I've been using this ${query} for a week now and it's life-changing.`,
-      `The design is sleek, but the documentation for ${query} could be better.`,
-      `Wait, did ${platform} really ship this? The ${query} feels a bit plasticky.`,
-      `Excellent value for money. If you are looking for a ${searchCategory === 'products' ? 'product' : 'movie'} like this, go for it!`,
-      `The ${query} arrived in perfect condition and works like a charm.`,
-      `I had some issues with the initial setup on ${platform}, but once it worked, it was great.`,
-      `Honestly, I've seen better reviews for ${query} elsewhere, but my experience was positive.`,
-      `A bit pricey for what it is, but the brand reputation is why I bought this ${query}.`,
-      `The ${searchCategory === 'products' ? 'features' : 'plot'} of this ${query} are truly unique.`,
+      `The design of ${query} is sleek and the performance is snappy.`,
+      `${platform} delivered my ${query} early, and I'm loving the display quality!`,
     ];
 
-    // Shuffle and pick 3-6 templates
-    const shuffled = [...templates].sort(() => 0.5 - Math.random());
-    const selectedReviews = shuffled.slice(0, 3 + Math.floor(Math.random() * 4));
+    const negativeTemplates = isMovie ? [
+      `I had high hopes for ${query}, but the plot was a major letdown.`,
+      `The dialogue in ${query} felt forced and unnatural. Avoid if you can.`,
+      `Too long and boring. ${query} could have been 40 minutes shorter.`,
+      `Disappointed with ${query}. The trailer was better than the actual movie.`,
+    ] : [
+      `Honestly, I've seen better quality for ${query} elsewhere. A bit disappointed.`,
+      `The ${query} arrived with some scratches. Poor packaging from ${platform}.`,
+      `Wait, did they really ship this? The ${query} feels cheap and plastic.`,
+      `Had some glitches with the software on my ${query} right out of the box.`,
+    ];
+
+    const neutralTemplates = isMovie ? [
+      `An average experience with ${query}. It was okay, but not memorable.`,
+      `${query} has its moments, but overall it's just a mediocre film.`,
+      `The visuals in ${query} were great, but the story was just meh.`,
+    ] : [
+      `The ${query} is decent for the price, but lacks some premium features.`,
+      `It works as advertised, but I expected more from a brand like this.`,
+      `The ${query} is just okay. Nothing special, but not terrible either.`,
+    ];
+
+    const allTemplates = [...positiveTemplates, ...negativeTemplates, ...neutralTemplates];
+
+    // Add some product-specific flavor to certain templates
+    const decoratedTemplates = allTemplates.map(t => {
+      if (Math.random() > 0.7) return t.replace(query, `this specific ${query}`);
+      return t;
+    });
+
+    // Shuffle and pick 4-8 templates for variety
+    const shuffled = [...decoratedTemplates].sort(() => 0.5 - Math.random());
+    const selectedReviews = shuffled.slice(0, 4 + Math.floor(Math.random() * 5));
 
     const platformUrls: Record<Platform, string> = {
       amazon: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,

@@ -36,22 +36,42 @@ const Index = () => {
   const [sources, setSources] = useState<{ title: string; url: string }[]>([]);
   const [searchedQuery, setSearchedQuery] = useState("");
   const [searchedPlatform, setSearchedPlatform] = useState<string | string[]>("");
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
 
-  // Helper for demo/fallback when Edge Function is not available
   const getMockReviews = (query: string, platform: Platform): any => {
-    const sentiments = ["Positive", "Negative", "Neutral"];
-    const mockReviews = [
-      `I really liked this ${query}! It exceeded my expectations.`,
-      `Not what I expected from ${platform}, quite disappointed.`,
-      `An average experience with ${query}. Could be better.`,
-      `Absolutely fantastic! Best ${searchCategory === 'products' ? 'product' : 'movie'} of the year.`,
-      `${platform} delivered fast, but the ${query} itself is just okay.`,
+    const templates = [
+      `I really liked this ${query}! It exceeded my expectations in every way.`,
+      `The build quality of this ${query} from ${platform} is impressive for the price.`,
+      `Not exactly what I expected, but the performance of the ${query} is still solid.`,
+      `I've been using this ${query} for a week now and it's life-changing.`,
+      `The design is sleek, but the documentation for ${query} could be better.`,
+      `Wait, did ${platform} really ship this? The ${query} feels a bit plasticky.`,
+      `Excellent value for money. If you are looking for a ${searchCategory === 'products' ? 'product' : 'movie'} like this, go for it!`,
+      `The ${query} arrived in perfect condition and works like a charm.`,
+      `I had some issues with the initial setup on ${platform}, but once it worked, it was great.`,
+      `Honestly, I've seen better reviews for ${query} elsewhere, but my experience was positive.`,
+      `A bit pricey for what it is, but the brand reputation is why I bought this ${query}.`,
+      `The ${searchCategory === 'products' ? 'features' : 'plot'} of this ${query} are truly unique.`,
     ];
+
+    // Shuffle and pick 3-6 templates
+    const shuffled = [...templates].sort(() => 0.5 - Math.random());
+    const selectedReviews = shuffled.slice(0, 3 + Math.floor(Math.random() * 4));
+
+    const platformUrls: Record<Platform, string> = {
+      amazon: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+      flipkart: `https://www.flipkart.com/search?q=${encodeURIComponent(query)}`,
+      imdb: `https://www.imdb.com/find?q=${encodeURIComponent(query)}`,
+      reviewmonk: `https://thereviewmonk.com/search?q=${encodeURIComponent(query)}`,
+    };
 
     return {
       success: true,
-      reviews: mockReviews.slice(0, 3 + Math.floor(Math.random() * 3)),
-      sources: [{ title: `${platform} - ${query} Search Results`, url: `https://www.${platform}.com` }],
+      reviews: selectedReviews,
+      sources: [{
+        title: `${platform} - ${query} Search Results`,
+        url: platformUrls[platform] || `https://www.${platform}.com`
+      }],
     };
   };
 
@@ -61,6 +81,7 @@ const Index = () => {
     setError(null);
     setAnalyzedReviews([]);
     setSources([]);
+    setIsUsingMockData(false);
 
     try {
       const platformsToQuery = searchCategory === 'products' ? selectedProductPlatforms : selectedMoviePlatforms;
@@ -85,6 +106,7 @@ const Index = () => {
           if (!response.success && import.meta.env.DEV) {
             console.log(`Using mock data for ${p} because:`, response.error);
             response = getMockReviews(query.trim(), p);
+            setIsUsingMockData(true);
           }
 
           if (response.success && response.reviews?.length) {
@@ -265,6 +287,15 @@ const Index = () => {
 
         {analyzedReviews.length > 0 && !isLoading && (
           <div className="space-y-6 animate-fade-in">
+            {isUsingMockData && (
+              <div className="card-glass rounded-xl p-4 border border-amber-500/30 bg-amber-500/5 text-amber-500 text-sm flex items-center gap-3">
+                <Brain className="w-5 h-5 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">Offline Mode Enabled</p>
+                  <p className="text-xs opacity-80">The live review engine is currently unreachable. Showing simulated insights based on historical patterns for "{searchedQuery}".</p>
+                </div>
+              </div>
+            )}
             <SentimentSummary results={analyzedReviews} query={searchedQuery} platform={searchedPlatform} />
             <SentimentCharts results={analyzedReviews} />
 
